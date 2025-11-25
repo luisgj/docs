@@ -30,6 +30,9 @@
     },
     {
       "name": "Rails"
+    },
+    {
+      "name": "Webhooks"
     }
   ],
   "paths": {
@@ -1381,6 +1384,464 @@
           }
         }
       }
+    },
+    "/webhooks/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "List webhook subscriptions",
+        "description": "Retrieve all webhook subscriptions for your account",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of webhook subscriptions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookSubscriptionListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Create webhook subscription",
+        "description": "Create a new webhook subscription to receive event notifications",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookSubscriptionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Webhook subscription created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/webhooks/{webhookId}/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Get webhook subscription details",
+        "description": "Retrieve details of a specific webhook subscription",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "description": "Webhook subscription ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Webhook subscription details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookSubscription"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Update webhook subscription",
+        "description": "Update an existing webhook subscription",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "description": "Webhook subscription ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WebhookSubscriptionUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook subscription updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookSubscription"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Delete webhook subscription",
+        "description": "Delete a webhook subscription",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "description": "Webhook subscription ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Webhook subscription deleted successfully"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/webhooks/{webhookId}/test/": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Webhooks"
+        ],
+        "summary": "Send test webhook event",
+        "description": "Send a test event to verify webhook subscription is working correctly",
+        "parameters": [
+          {
+            "name": "webhookId",
+            "in": "path",
+            "required": true,
+            "description": "Webhook subscription ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "eventType": {
+                    "type": "string",
+                    "description": "Specific event type to test (optional, defaults to test event)",
+                    "examples": ["customer.created", "order.created"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Test event sent successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "deliveryStatus": {
+                      "type": "string",
+                      "enum": ["delivered", "failed"]
+                    },
+                    "statusCode": {
+                      "type": "integer",
+                      "description": "HTTP status code received from webhook endpoint"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {
+    "customerCreated": {
+      "post": {
+        "summary": "Customer Created",
+        "description": "Triggered when a new customer is successfully created",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerCreatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
+    },
+    "customerUpdated": {
+      "post": {
+        "summary": "Customer Updated",
+        "description": "Triggered when customer information is updated",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerUpdatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
+    },
+    "virtualAccountCreated": {
+      "post": {
+        "summary": "Account Created",
+        "description": "Triggered when a new virtual account is created",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
+    },
+    "virtualAccountUpdated": {
+      "post": {
+        "summary": "Account Updated",
+        "description": "Triggered when a new virtual account is updated",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUpdatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
+    },
+    "virtualAccountDeactivated": {
+      "post": {
+        "summary": "Account Deactivated",
+        "description": "Triggered when a virtual account is deactivated",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountDeactivatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
+    },
+    "orderCreated": {
+      "post": {
+        "summary": "Order Created",
+        "description": "Triggered when a new order is created",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
+    },
+    "orderUpdated": {
+      "post": {
+        "summary": "Order Updated",
+        "description": "Triggered when an order is successfully updated",
+        "tags": ["Webhooks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderUpdatedEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Webhook received successfully"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1625,11 +2086,7 @@
             "examples": ["Main operating account for daily transactions", "High-yield savings account"]
           },
           "embeddedWallet": {
-            "type": "array",
-            "description": "Embedded stablecoin wallet addresses of the virtual account.",
-            "items": {
-              "$ref": "#/components/schemas/EmbeddedWallet"
-            }
+            "$ref": "#/components/schemas/EmbeddedWallet"
           },
           "accountBalance": {
             "$ref": "#/components/schemas/AccountBalance"
@@ -1739,26 +2196,28 @@
         ]
       },
       "EmbeddedWallet": {
-        "type": "object",
+        "type": "array",
         "description": "Embedded stablecoin wallet addresses of the virtual account.",
-        "properties": {
-          "address": {
-            "type": "string",
-            "description": "Embedded stablecoin wallet address of the virtual account.",
-            "examples": ["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"]
-          },
-          "chainType": {
-            "type": "string",
-            "description": "Blockchain Virtual Machine Type (SVM or EVM)",
-            "examples": ["EVM", "SVM"]
-          },
-          "chainName": {
-            "type": "string",
-            "description": "Blockchain Name",
-            "examples": ["Ethereum", "Solana"]
+        "items": {
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string",
+              "description": "Embedded stablecoin wallet address of the virtual account.",
+              "examples": ["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"]
+            },
+            "chainType": {
+              "type": "string",
+              "description": "Blockchain Virtual Machine Type (SVM or EVM)",
+              "examples": ["EVM", "SVM"]
+            },
+            "chainName": {
+              "type": "string",
+              "description": "Blockchain Name",
+              "examples": ["Ethereum", "Solana"]
+            }
           }
         },
-        "additionalProperties": false,
         "examples": [
           [{
             "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
@@ -2824,9 +3283,434 @@
           }
         },
         "additionalProperties": false
+      },
+      "WebhookSubscription": {
+        "type": "object",
+        "description": "Webhook subscription details",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique webhook subscription ID",
+            "examples": ["webhook_1a2b3c4d5e6f"]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL where webhook events will be sent",
+            "examples": ["https://example.com/webhooks"]
+          },
+          "events": {
+            "type": "array",
+            "description": "List of event types this subscription listens to",
+            "items": {
+              "type": "string",
+              "enum": [
+                "customer.created",
+                "customer.updated",
+                "account.created",
+                "account.updated",
+                "account.deactivated",
+                "order.created",
+                "order.updated"
+              ]
+            },
+            "examples": [["customer.created", "order.created"]]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive", "failed"],
+            "description": "Current status of the webhook subscription",
+            "examples": ["active"]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the subscription was created",
+            "examples": ["2024-01-15T10:30:00Z"]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the subscription was last updated",
+            "examples": ["2024-01-16T14:20:00Z"]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the webhook",
+            "additionalProperties": true,
+            "examples": [{"environment": "production", "region": "us-east"}]
+          }
+        },
+        "required": ["id", "url", "events", "status"],
+        "additionalProperties": false
+      },
+      "WebhookSubscriptionCreate": {
+        "type": "object",
+        "description": "Request to create a webhook subscription",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL where webhook events will be sent",
+            "examples": ["https://example.com/webhooks"]
+          },
+          "events": {
+            "type": "array",
+            "description": "List of event types to subscribe to",
+            "items": {
+              "type": "string",
+              "enum": [
+                "customer.created",
+                "customer.updated",
+                "account.created",
+                "account.updated",
+                "account.deactivated",
+                "order.created",
+                "order.updated"
+              ]
+            },
+            "minItems": 1,
+            "examples": [["customer.created", "order.completed"]]
+          },
+          "secret": {
+            "type": "string",
+            "description": "Secret used to sign each request.",
+            "examples": ["my_secret_string_stored_in_my_project"]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the webhook",
+            "additionalProperties": true,
+            "examples": [{"environment": "production"}]
+          }
+        },
+        "required": ["url", "events"],
+        "additionalProperties": false
+      },
+      "WebhookSubscriptionUpdate": {
+        "type": "object",
+        "description": "Request to update a webhook subscription",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL where webhook events will be sent",
+            "examples": ["https://example.com/webhooks"]
+          },
+          "events": {
+            "type": "array",
+            "description": "List of event types to subscribe to",
+            "items": {
+              "type": "string",
+              "enum": [
+                "customer.created",
+                "customer.updated",
+                "account.created",
+                "account.updated",
+                "account.deactivated",
+                "order.created",
+                "order.updated"
+              ]
+            },
+            "minItems": 1,
+            "examples": [["customer.created", "order.created", "order.updated"]]
+          },
+          "secret": {
+            "type": "string",
+            "description": "Secret used to sign each request.",
+            "examples": ["my_secret_string_stored_in_my_project"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "inactive"],
+            "description": "Update the status of the webhook subscription",
+            "examples": ["active"]
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata for the webhook",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookSubscriptionListResponse": {
+        "type": "object",
+        "description": "List of webhook subscriptions",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookSubscription"
+            }
+          },
+          "pagination": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "integer",
+                "examples": [1]
+              },
+              "pageSize": {
+                "type": "integer",
+                "examples": [100]
+              },
+              "totalPages": {
+                "type": "integer",
+                "examples": [5]
+              },
+              "totalItems": {
+                "type": "integer",
+                "examples": [42]
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "WebhookEventBase": {
+        "type": "object",
+        "description": "Base properties for all webhook events",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique event ID",
+            "examples": ["evt_1a2b3c4d5e6f"]
+          },
+          "eventType": {
+            "type": "string",
+            "description": "Type of event"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the event occurred",
+            "examples": ["2024-01-15T10:30:00Z"]
+          }
+        },
+        "required": ["id", "eventType", "timestamp"]
+      },
+      "CustomerCreatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["customer.created"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "customer": {
+                    "$ref": "#/components/schemas/CustomerResponse"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CustomerUpdatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["customer.updated"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "customer": {
+                    "$ref": "#/components/schemas/CustomerResponse"
+                  }                
+                }
+              }
+            }
+          }
+        ]
+      },
+      "AccountCreatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["account.created"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "account": {
+                    "$ref": "#/components/schemas/VirtualAccount"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "AccountUpdatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["account.created"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "account": {
+                    "$ref": "#/components/schemas/VirtualAccount"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "AccountDeactivatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["account.deactivated"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "accountId": {
+                    "type": "string",
+                    "examples": ["acc_1a2b3c4d"]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "description": "Reason for deactivation",
+                    "examples": ["user_requested", "compliance"]
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "OrderCreatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["order.created"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "order": {
+                    "$ref": "#/components/schemas/OrderRequestResponse"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "OrderUpdatedEvent": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/WebhookEventBase"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "eventType": {
+                "type": "string",
+                "enum": ["order.updated"]
+              },
+              "data": {
+                "type": "object",
+                "properties": {
+                  "order": {
+                    "$ref": "#/components/schemas/OrderRequestResponse"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "examples": ["2024-01-15T10:35:00Z"]
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     },
     "responses": {
+      "BadRequest": {
+        "description": "Bad Request - Invalid or missing parameters",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseError"
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized - API Token Missing or Unrecognized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseError"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Resource not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseError"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal Server Error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseError"
+            }
+          }
+        }
+      },
       "ConflictDuplicate": {
         "description": "Duplicate request detected for this Idempotency-Key.",
         "content": {
