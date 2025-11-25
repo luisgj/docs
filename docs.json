@@ -10,7 +10,7 @@
   "favicon": "/favicon.png",
   "fonts": {
     "family": "Kanit",
-    "weight": 500,
+    "weight": 400,
     "body": {
       "family": "Inter",
       "weight": 400
