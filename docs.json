@@ -9,8 +9,10 @@
   },
   "favicon": "/favicon.png",
   "fonts": {
-    "family": "Kanit",
-    "weight": 400,
+    "heading": {
+      "family": "Kanit",
+      "weight": 400
+    },
     "body": {
       "family": "Inter",
       "weight": 400
