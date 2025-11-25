@@ -1,58 +1,125 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
+    "title": "Bando Fintech 3.0 API",
+    "version": "1.3.0",
+    "contact": {
+      "name": "Bando Support",
+      "email": "support@bando.cool",
+      "url": "https://docs.bando.cool/"
     },
-    "version": "1.0.0"
+    "description": "Bando Fintech 3.0 API - Supercharges your fintech or financial product with the stablecoin economy"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.bando.cool/v1"
     }
   ],
-  "security": [
+  "tags": [
     {
-      "bearerAuth": []
+      "name": "Customers"
+    },
+    {
+      "name": "Assets"
+    },
+    {
+      "name": "Orders"
+    },
+    {
+      "name": "Accounts"
+    },
+    {
+      "name": "Rails"
     }
   ],
   "paths": {
-    "/plants": {
+    "/customers/": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Retrieve a list of customers",
+        "description": "Retrieve a list of customers. This endpoint is paginated.",
         "parameters": [
           {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
+            "$ref": "#/components/parameters/PageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
+                  "$ref": "#/components/schemas/CustomerListResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
+            "description": "Bad Request - Invalid or missing parameters",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customers not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
                 }
               }
             }
@@ -60,35 +127,93 @@
         }
       },
       "post": {
-        "description": "Creates a new plant in the store",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Create a new customer",
+        "description": "Create a new customer. Along with KYC data and base64 document files. Business customer will need to submit individuals data and documents for each individual.",
+        "operationId": "createCustomer",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/CustomerCreateRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
-          "200": {
-            "description": "plant response",
+          "201": {
+            "description": "Created customer",
+            "headers": {
+              "Location": {
+                "description": "URI of the newly created customer",
+                "schema": {
+                  "type": "string",
+                  "format": "uri-reference"
+                }
+              }
+            },
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
+                  "$ref": "#/components/schemas/CustomerResponse"
                 }
               }
             }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Bad Request - Invalid or missing parameters",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
                 }
               }
             }
@@ -96,121 +221,2629 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/customers/{customerId}/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Retrieve a customer by ID",
+        "description": "Retrieve a customer by ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "customerId",
             "in": "path",
-            "description": "ID of plant to delete",
+            "description": "Customer ID",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Customer retrieved successfully",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
                 }
               }
             }
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/assets/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Get list of existing assets including currency, yield data",
+        "description": "We provide a convenience endpoint to retrieve a list of assets including yield data and currency information.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customerId}/requirements/": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Submit a requirement for customer",
+        "description": "Submit a requirement (document, attestation, data, or verification) for a customer. This can be called during onboarding or later to add additional requirements.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "description": "Customer ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/RequirementSubmission"
               }
             }
           }
         },
         "responses": {
+          "201": {
+            "description": "Requirement submitted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementsState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid requirement or submission data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer or requirement not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Retrieve a list of virtual accounts",
+        "description": "Retrieve a list of virtual accounts. This endpoint is paginated.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "query",
+            "description": "Customer ID to filter virtual accounts by",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          }
+        ],
+        "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Create a new virtual account",
+        "description": "Create a new virtual account.",
+        "operationId": "createVirtualAccount",
+        "requestBody": {
+          "description": "Virtual account to create",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VirtualAccountRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Virtual account created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateVirtualAccountResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Retrieve a specific virtual account",
+        "description": "Retrieve a specific virtual account by its ID.",
+        "operationId": "getVirtualAccount",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "ID of the virtual account to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VirtualAccount"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Accounts"
+        ],
+        "summary": "Deactivates virtual account",
+        "description": "Deactivates a virtual account.",
+        "operationId": "deactivateVirtualAccount",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Virtual Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Virtual Account deactivated successfully"
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/orders/requests/": {
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Create a new order request",
+        "description": "Creates a new order request.",
+        "operationId": "createOrderRequest",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKeyHeader"
+          },
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Virtual Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequestCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created order request",
+            "headers": {
+              "Location": {
+                "description": "URI of the newly created order request",
+                "schema": {
+                  "type": "string",
+                  "format": "uri-reference"
+                }
+              },
+              "Idempotency-Key": {
+                "$ref": "#/components/headers/Idempotency-Key"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderRequestResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - IP Not Allowed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transactions not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "$ref": "#/components/responses/ConflictDuplicate"
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Indicates the client should retry the spending transaction due to an on-chain failure caused by network congestion.",
+            "headers": {
+              "Retry-After": {
+                "description": "Indicates how long in seconds to wait before retrying.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Get order requests for a specific virtual account",
+        "operationId": "getOrderRequests",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Virtual Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageNumber"
+          },
+          {
+            "$ref": "#/components/parameters/PageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of order requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderRequestListResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order requests not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/orders/{orderId}/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Get order request status and details",
+        "operationId": "getOrderRequestStatus",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "description": "Virtual Account ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "orderId",
+            "in": "path",
+            "description": "Order ID to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order request retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderRequestResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order request not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "412": {
+            "description": "Wrong order request query parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rails/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Rails"
+        ],
+        "summary": "List available rail types",
+        "description": "Retrieve all available rail types with their requirements and supported regions.",
+        "responses": {
+          "200": {
+            "description": "Available rail types retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RailTypesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - API Token Missing or Unrecognized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/rails/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Rails",
+          "Accounts"
+        ],
+        "summary": "List virtual account rails",
+        "description": "Retrieve all rails configured for a specific virtual account with their current status.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Virtual Account ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter by rail status",
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "active", "suspended", "rejected"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Virtual account rails retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountRailsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Virtual account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Rails",
+          "Accounts"
+        ],
+        "summary": "Request new rail for virtual account",
+        "description": "Request a new rail type for a virtual account. The rail will be created in 'pending' status and require document verification.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Virtual Account ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Rail request created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RailResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Invalid or missing parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Rail type already exists for this virtual account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/rails/{railId}/": {
+      "get": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Rails",
+          "Accounts"
+        ],
+        "summary": "Get specific rail details",
+        "description": "Retrieve detailed information about a specific rail including its configuration and status.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Virtual Account ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "railId",
+            "in": "path",
+            "required": true,
+            "description": "Rail ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rail details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RailResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Rail or virtual account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "tags": [
+          "Rails",
+          "Accounts"
+        ],
+        "summary": "Deactivates rail from virtual account",
+        "description": "Deactivates a rail from a virtual account.",
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "description": "Virtual Account ID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "railId",
+            "in": "path",
+            "required": true,
+            "description": "Rail ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Rail removed successfully"
+          },
+          "404": {
+            "description": "Rail or virtual account not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Cannot remove rail with pending transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseError"
+                }
+              }
+            }
           }
         }
       }
     }
   },
   "components": {
+    "headers": {
+      "Idempotency-Key": {
+        "description": "Echoes the Idempotency-Key supplied in the request.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "parameters": {
+      "IdempotencyKeyHeader": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "description": "Unique key that makes this request idempotent.",
+        "schema": {
+          "type": "string",
+          "maxLength": 255
+        }
+      },
+      "PageNumber": {
+        "name": "pageNumber",
+        "in": "query",
+        "description": "Page number (starts from 1)",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "PageSize": {
+        "name": "pageSize",
+        "in": "query",
+        "description": "Page size (number of items per page)",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "default": 100
+        }
+      }
+    },
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "TransactionReceipt": {
+        "type": "object",
+        "description": "Blockchain transaction receipt",
+        "properties": {
+          "transactionReceipt": {
+            "description": "Blockchain transaction receipt",
+            "$ref": "#/components/schemas/OnChainTransactionReceipt"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OnChainTransactionReceipt": {
+        "type": "object",
+        "description": "Blockchain transaction receipt",
+        "properties": {
+          "hash": {
+            "type": "string",
+            "description": "OnChain transaction hash"
+          },
+          "chainType": {
+            "type": "string",
+            "description": "Blockchain Virtual Machine Type (SVM or EVM)"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Customer": {
+        "type": "object",
+        "description": "Customer details. A customer can be an individual or a business. A customer may have multiple accounts.",
+        "properties": {
+          "customerType": {
+            "description": "The type of customer (e.g., individual, business).",
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL",
+              "BUSINESS"
+            ],
+            "examples": ["INDIVIDUAL", "BUSINESS"]
+          },
+          "customerDetails": {
+            "description": "KYC data. Can be either Person or Business.",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Person"
+              },
+              {
+                "$ref": "#/components/schemas/Business"
+              }
+            ]
+          }
+        },
+        "required": ["customerType", "customerDetails"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "customerType": "INDIVIDUAL",
+            "customerDetails": {
+              "firstName": "Maria",
+              "lastName": "Garcia",
+              "email": "maria.garcia@example.com",
+              "phone": "+525551234567"
+            }
+          },
+          {
+            "customerType": "BUSINESS",
+            "customerDetails": {
+              "name": "Acme Corp",
+              "email": "contact@acmecorp.com",
+              "phone": "+525555678900",
+              "country": "MX",
+              "individuals": [
+                {
+                  "firstName": "Carlos",
+                  "lastName": "Rodriguez",
+                  "email": "carlos@acmecorp.com",
+                  "phone": "+525551234567"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "CustomerCreateRequest": {
+        "type": "object",
+        "description": "Customer details. A customer can be an individual or a business. A customer may have multiple accounts.",
+        "properties": {
+          "customer": {
+            "$ref": "#/components/schemas/Customer"
+          },
+          "requirements": {
+            "type": "array",
+            "description": "KYC/KYB requirements for the customer.",
+            "items": {
+              "$ref": "#/components/schemas/RequirementSubmission"
+            }
+          }
+        },
+        "required": ["customer"]
+      },
+      "Person": {
+        "type": "object",
+        "description": "Person details.",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "First name of the person.",
+            "examples": ["Maria", "John"]
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the person.",
+            "examples": ["Garcia", "Smith"]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the person.",
+            "examples": ["maria.garcia@example.com", "john.smith@example.com"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the person.",
+            "examples": ["+525551234567", "+14155551234"]
+          }
+        },
+        "required": ["firstName", "lastName", "email"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "firstName": "Maria",
+            "lastName": "Garcia",
+            "email": "maria.garcia@example.com",
+            "phone": "+525551234567"
+          }
+        ]
+      },
+      "Business": {
+        "type": "object",
+        "description": "Business details.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the business.",
+            "examples": ["Acme Corp", "TechStart Inc"]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the business.",
+            "examples": ["contact@acmecorp.com", "info@techstart.com"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number of the business.",
+            "examples": ["+525555678900", "+14155559876"]
+          },
+          "country": {
+            "type": "string",
+            "description": "Country of the business.",
+            "examples": ["MX", "US", "BR"]
+          },
+          "individuals": {
+            "type": "array",
+            "description": "Individuals associated with the business.",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          }
+        },
+        "required": ["name", "email", "country"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "name": "Acme Corp",
+            "email": "contact@acmecorp.com",
+            "phone": "+525555678900",
+            "country": "MX",
+            "individuals": [
+              {
+                "firstName": "Carlos",
+                "lastName": "Rodriguez",
+                "email": "carlos@acmecorp.com",
+                "phone": "+525551234567"
+              }
+            ]
+          }
+        ]
+      },
+      "VirtualAccount": {
         "type": "object",
         "properties": {
           "name": {
-            "description": "The name of the plant",
-            "type": "string"
+            "type": "string",
+            "description": "Name of the virtual account.",
+            "examples": ["Operating Account", "Savings Account", "Treasury Account"]
           },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "description": {
+            "type": "string",
+            "description": "Description of the virtual account.",
+            "examples": ["Main operating account for daily transactions", "High-yield savings account"]
+          },
+          "embeddedWallet": {
+            "type": "array",
+            "description": "Embedded stablecoin wallet addresses of the virtual account.",
+            "items": {
+              "$ref": "#/components/schemas/EmbeddedWallet"
+            }
+          },
+          "accountBalance": {
+            "$ref": "#/components/schemas/AccountBalance"
+          },
+          "rails": {
+            "type": "array",
+            "description": "Active rails configured for the virtual account.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "details": {
+                  "$ref": "#/components/schemas/RailInstance"
+                },
+                "requirements": {
+                  "$ref": "#/components/schemas/RequirementsState"
+                }
+              }
+            }
+          },
+          "customer": {
+            "type": "string",
+            "description": "Customer ID of the virtual account.",
+            "examples": ["cust_9f8e7d6c5b4a3210", "cust_abc123def456"]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccountBalance": {
+        "type": "object",
+        "description": "Account balances for all assets.",
+        "properties": {
+          "compoundBalanceUSD": {
+            "type": "number",
+            "description": "Compound balance in USD.",
+            "examples": [15250.75, 50000.00, 1234.56]
+          },
+          "assets": {
+            "type": "array",
+            "description": "Account balances for all assets.",
+            "items": {
+              "$ref": "#/components/schemas/AssetBalance"
+            }
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "compoundBalanceUSD": 15250.75,
+            "assets": [
+              {
+                "asset": {
+                  "id": 1,
+                  "name": "CETES 28 Days",
+                  "symbol": "CETES",
+                  "key": "cetes_28d",
+                  "type": "GOV_BONDS"
+                },
+                "amount": 100000.00,
+                "balanceUSD": 5500.00
+              },
+              {
+                "asset": {
+                  "id": 2,
+                  "name": "USD Coin",
+                  "symbol": "USDC",
+                  "key": "usdc",
+                  "type": "STABLECOIN"
+                },
+                "amount": 9750.75,
+                "balanceUSD": 9750.75
+              }
+            ]
+          }
+        ]
+      },
+      "AssetBalance": {
+        "type": "object",
+        "description": "Account balance for a specific asset.",
+        "properties": {
+          "asset": {
+            "$ref": "#/components/schemas/Asset"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Asset amount held.",
+            "examples": [100000.00, 9750.75, 500.25]
+          },
+          "balanceUSD": {
+            "type": "number",
+            "description": "Asset balance in USD.",
+            "examples": [5500.00, 9750.75, 500.25]
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "asset": {
+              "id": 1,
+              "name": "CETES 28 Days",
+              "symbol": "CETES",
+              "key": "cetes_28d",
+              "type": "GOV_BONDS"
+            },
+            "amount": 100000.00,
+            "balanceUSD": 5500.00
+          }
+        ]
+      },
+      "EmbeddedWallet": {
+        "type": "object",
+        "description": "Embedded stablecoin wallet addresses of the virtual account.",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "Embedded stablecoin wallet address of the virtual account.",
+            "examples": ["0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb", "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"]
+          },
+          "chainType": {
+            "type": "string",
+            "description": "Blockchain Virtual Machine Type (SVM or EVM)",
+            "examples": ["EVM", "SVM"]
+          },
+          "chainName": {
+            "type": "string",
+            "description": "Blockchain Name",
+            "examples": ["Ethereum", "Solana"]
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          [{
+            "address": "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+            "chainType": "EVM",
+            "chainName": "Ethereum"
+          },
+          {
+            "address": "742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+            "chainType": "SVM",
+            "chainName": "Solana"
+          }]
+        ]
+      },
+      "MPCKey": {
+        "type": "object",
+        "description": "Multi-Party Computation key for wallet signing",
+        "properties": {
+          "keyId": {
+            "type": "string",
+            "description": "Unique identifier for the MPC key",
+            "examples": ["mpc_key_abc123xyz", "mpc_key_def456uvw"]
+          },
+          "keyShare": {
+            "type": "string",
+            "description": "Key share component. Only returned once. DO NOT SHARE THIS. STORE IT SECURELY.",
+            "examples": ["eyDJH234.0000000000000000000000000000000000000000000000000000000000000000.a"]
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "keyId": "mpc_key_abc123xyz",
+            "keyShare": "04a5f8e9d3c2b1a0f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1..."
+          }
+        ]
+      },
+      "ACH": {
+        "type": "object",
+        "description": "US ACH rails configuration",
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number",
+            "examples": ["1234567890"]
+          },
+          "routingNumber": {
+            "type": "string",
+            "description": "Routing number",
+            "examples": ["021000021", "111000025"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "examples": ["John Smith", "Acme Corp"]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "examples": ["john.smith@example.com"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone",
+            "examples": ["+14155551234"]
+          }
+        },
+        "required": ["accountNumber", "routingNumber", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "accountNumber": "1234567890",
+            "routingNumber": "021000021",
+            "name": "John Smith",
+            "email": "john.smith@example.com",
+            "phone": "+14155551234"
+          }
+        ]
+      },
+      "Wire": {
+        "type": "object",
+        "description": "US Wire rails configuration",
+        "properties": {
+          "bankName": {
+            "type": "string",
+            "description": "Bank name",
+            "examples": ["Chase Bank", "Bank of America"]
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number",
+            "examples": ["9876543210"]
+          },
+          "routingNumber": {
+            "type": "string",
+            "description": "Routing number",
+            "examples": ["021000021", "026009593"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "examples": ["John Smith", "Acme Corp"]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "examples": ["john.smith@example.com"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone",
+            "examples": ["+14155551234"]
+          }
+        },
+        "required": ["bankName", "accountNumber", "routingNumber", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "bankName": "Chase Bank",
+            "accountNumber": "9876543210",
+            "routingNumber": "021000021",
+            "name": "John Smith",
+            "email": "john.smith@example.com",
+            "phone": "+14155551234"
+          }
+        ]
+      },
+      "SEPA": {
+        "type": "object",
+        "description": "SEPA rails configuration",
+        "properties": {
+          "iban": {
+            "type": "string",
+            "description": "IBAN",
+            "examples": ["DE89370400440532013000", "FR1420041010050500013M02606"]
+          },
+          "bic": {
+            "type": "string",
+            "description": "BIC",
+            "examples": ["COBADEFFXXX", "BNPAFRPPXXX"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "examples": ["Hans Mueller", "Marie Dubois"]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "examples": ["hans.mueller@example.com"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone",
+            "examples": ["+4930123456"]
+          }
+        },
+        "required": ["iban", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "iban": "DE89370400440532013000",
+            "bic": "COBADEFFXXX",
+            "name": "Hans Mueller",
+            "email": "hans.mueller@example.com",
+            "phone": "+4930123456"
+          }
+        ]
+      },
+      "PIX": {
+        "type": "object",
+        "description": "PIX rails configuration",
+        "properties": {
+          "pixKey": {
+            "type": "string",
+            "description": "PIX key",
+            "examples": ["joao.silva@example.com", "+5511987654321", "12345678900"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "examples": ["João Silva", "Maria Santos"]
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "examples": ["joao.silva@example.com"]
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone",
+            "examples": ["+5511987654321"]
+          }
+        },
+        "required": ["pixKey", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "pixKey": "joao.silva@example.com",
+            "name": "João Silva",
+            "email": "joao.silva@example.com",
+            "phone": "+5511987654321"
+          }
+        ]
+      },
+      "SPEI": {
+        "type": "object",
+        "description": "SPEI rails configuration",
+        "properties": {
+          "clabe": {
+            "type": "string",
+            "description": "CLABE",
+            "examples": ["012180001234567897", "032180000118359719"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Friendly name of the bank account",
+            "examples": ["Main Account", "Business Account"]
+          },
+          "bankName": {
+            "type": "string",
+            "description": "Bank name",
+            "examples": ["BBVA Mexico", "Banorte"]
+          },
+          "fullName": {
+            "type": "string",
+            "description": "Full name of the bank account holder",
+            "examples": ["María García López", "Carlos Rodriguez"]
+          }
+        },
+        "required": ["clabe", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "clabe": "012180001234567897",
+            "name": "Main Account",
+            "bankName": "BBVA Mexico",
+            "fullName": "María García López"
+          }
+        ]
+      },
+      "Price": {
+        "type": "object",
+        "description": "Pricing for product",
+        "properties": {
+          "currency": {
+            "description": "Price in FIAT currency",
+            "type": "string",
+            "examples": ["USD", "MXN", "BRL"]
+          },
+          "value": {
+            "description": "Price for the asset in FIAT, in a string value to prevent lost precision",
+            "type": "string",
+            "examples": ["100.00", "1850.50", "5.47"]
+          },
+          "stableCoinCurrency": {
+            "description": "Price in a stable coin like USDC or USDT",
+            "type": "string",
+            "examples": ["USDC", "USDT"]
+          },
+          "stableCoinValue": {
+            "description": "Price for the asset in stable coin, in a string value to prevent lost precision",
+            "type": "string",
+            "examples": ["5.50", "100.25", "0.29"]
+          },
+          "yield": {
+            "description": "Yield bearing data for the asset",
+            "$ref": "#/components/schemas/Yield"
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "currency": "MXN",
+            "value": "100.00",
+            "stableCoinCurrency": "USDC",
+            "stableCoinValue": "5.50",
+            "yield": {
+              "type": "GOV_BONDS",
+              "apy": 10.5,
+              "baseCurrency": "MXN"
+            }
+          }
+        ]
+      },
+      "Yield": {
+        "type": "object",
+        "description": "Yield for asset",
+        "properties": {
+          "type": {
+            "description": "What kind of yield does this asset have?",
+            "type": "string",
+            "enum": [
+              "STABLECOIN_MARKETS",
+              "GOV_BONDS"
+            ],
+            "examples": ["GOV_BONDS", "STABLECOIN_MARKETS"]
+          },
+          "apy": {
+            "description": "APY for the asset",
+            "type": "number",
+            "examples": [10.5, 4.2, 8.75]
+          },
+          "baseCurrency": {
+            "description": "Base currency for the yield",
+            "type": "string",
+            "examples": ["MXN", "USD", "BRL"]
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "type": "GOV_BONDS",
+            "apy": 10.5,
+            "baseCurrency": "MXN"
+          },
+          {
+            "type": "STABLECOIN_MARKETS",
+            "apy": 4.2,
+            "baseCurrency": "USD"
+          }
+        ]
+      },
+      "ResponseError": {
+        "description": "API error responses",
+        "type": "object",
+        "properties": {
+          "errorCode": {
+            "description": "Error code for the error",
+            "type": "string",
+            "examples": ["INVALID_REQUEST", "INSUFFICIENT_FUNDS", "RAIL_NOT_FOUND"]
+          },
+          "fields": {
+            "description": "Supplemental information about fields in error (when available)",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "examples": [
+              {
+                "amount": "Amount must be positive",
+                "currency": "Currency is required"
+              }
+            ]
+          },
+          "message": {
+            "description": "Detail message for the error",
+            "type": "string",
+            "examples": ["Invalid request parameters", "Insufficient account balance"]
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "errorCode": "INSUFFICIENT_FUNDS",
+            "message": "Account has insufficient funds for this transaction",
+            "fields": {
+              "accountId": "acc_123456",
+              "requestedAmount": "1000.00",
+              "availableBalance": "750.00"
+            }
+          }
+        ]
+      },
+      "AccountListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/VirtualAccount"
+        }
+      },
+      "CreateVirtualAccountResponse": {
+        "type": "object",
+        "properties": {
+          "virtualAccount": {
+            "$ref": "#/components/schemas/VirtualAccount"
+          },
+          "signingKey": {
+            "$ref": "#/components/schemas/MPCKey"
           }
         }
       },
-      "NewPlant": {
+      "VirtualAccountRequest": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "description": "Customer ID",
+            "examples": ["cust_9f8e7d6c5b4a3210"]
+          },
+          "baseCurrency": {
+            "type": "string",
+            "description": "Base currency for the virtual account",
+            "examples": ["USD", "MXN", "BRL"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Friendly name of the virtual account",
+            "examples": ["Operating Account", "Savings Account", "Treasury Account"]
+          },
+          "rails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RailRequest"
+            }
+          }
+        },
+        "required": ["baseCurrency", "name", "customerId"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "customerId": "cust_9f8e7d6c5b4a3210",
+            "baseCurrency": "USD",
+            "name": "Operating Account",
+            "rails": [
+              {
+                "type": "ACH"
+              }
+            ]
+          }
+        ]
+      },
+      "OrderRequest": {
+        "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/Plant"
+            "$ref": "#/components/schemas/OrderRequestCommand"
           },
           {
-            "required": [
-              "id"
-            ],
-            "type": "object",
             "properties": {
               "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+                "type": "string",
+                "format": "uuid",
+                "description": "UUID identifier for the transaction intent"
+              },
+              "status": {
+                "type": "string",
+                "description": "Current status of the transaction intent",
+                "enum": [
+                  "PENDING",
+                  "PROCESSING",
+                  "COMPLETED",
+                  "FAILED",
+                  "ACTIVE",
+                  "INACTIVE"
+                ]
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Creation timestamp"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Last update timestamp"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "OrderRequestCommand": {
+        "type": "object",
+        "properties": {
+          "asset": {
+            "type": "string",
+            "description": "Asset identifier"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type of the order",
+            "enum": [
+              "PURCHASE",
+              "TRANSFER"
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Asset amount"
+          },
+          "accountId": {
+            "type": "string",
+            "description": "Account identifier"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Payment currency identifier"
+          }
+        },
+        "required": ["asset", "type", "amount", "accountId", "currency"],
+        "additionalProperties": false
+      },
+      "AssetListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Asset"
+        }
+      },
+      "OrderRequestListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/OrderRequest"
+        }
+      },
+      "OrderRequestResponse": {
+        "$ref": "#/components/schemas/OrderRequest"
+      },
+      "CustomerListResponse": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Customer"
+        }
+      },
+      "CustomerResponse": {
+        "$ref": "#/components/schemas/Customer"
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "examples": [1, 42]
+          },
+          "name": {
+            "type": "string",
+            "examples": ["CETES 28 Days", "USD Coin", "Tether"]
+          },
+          "symbol": {
+            "type": "string",
+            "examples": ["CETES", "USDC", "USDT"]
+          },
+          "key": {
+            "type": "string",
+            "examples": ["cetes_28d", "usdc", "usdt"]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "STABLECOIN_MARKETS",
+              "GOV_BONDS",
+              "STABLECOIN"
+            ],
+            "examples": ["GOV_BONDS", "STABLECOIN"]
+          },
+          "description": {
+            "type": "string",
+            "examples": ["Mexican Treasury Bills with 28-day maturity", "US Dollar stablecoin"]
+          },
+          "decimals": {
+            "type": "integer",
+            "examples": [6, 18]
+          },
+          "friendlyDecimals": {
+            "type": "integer",
+            "examples": [2, 6]
+          },
+          "minAllowance": {
+            "type": "string",
+            "description": "String to prevent precision loss",
+            "examples": ["10.00", "1.00"]
+          },
+          "maxAllowance": {
+            "type": "string",
+            "description": "String to prevent precision loss",
+            "examples": ["100000.00", "1000000.00"]
+          },
+          "price": {
+            "$ref": "#/components/schemas/Price"
+          }
+        },
+        "additionalProperties": false,
+        "examples": [
+          {
+            "id": 1,
+            "name": "CETES 28 Days",
+            "symbol": "CETES",
+            "key": "cetes_28d",
+            "type": "GOV_BONDS",
+            "description": "Mexican Treasury Bills with 28-day maturity",
+            "decimals": 6,
+            "friendlyDecimals": 2,
+            "minAllowance": "10.00",
+            "maxAllowance": "100000.00",
+            "price": {
+              "currency": "MXN",
+              "value": "100.00",
+              "stableCoinCurrency": "USDC",
+              "stableCoinValue": "5.50",
+              "yield": {
+                "type": "GOV_BONDS",
+                "apy": 10.5,
+                "baseCurrency": "MXN"
               }
             }
           }
         ]
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "OrderListResponse": {
         "type": "object",
         "properties": {
-          "error": {
+          "totalItems": {
             "type": "integer",
-            "format": "int32"
+            "description": "Total number of orders"
           },
-          "message": {
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
+          },
+          "currentPage": {
+            "type": "integer",
+            "description": "Current page"
+          },
+          "orders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "PURCHASE",
+              "TRANSFER"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "ACTIVE",
+              "INACTIVE"
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal",
+            "description": "Amount paid"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/Asset"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Transaction creation timestamp"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Payment Metadata",
+            "properties": {
+              "blockchainTransactionUrl": {
+                "description": "Blockchain Transaction URL",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RailType": {
+        "type": "object",
+        "description": "Available rail type with requirements",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["ACH", "WIRE", "SEPA", "SPEI", "PIX"],
+            "description": "Rail type identifier",
+            "examples": ["ACH", "SPEI", "PIX"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable rail name",
+            "examples": ["US ACH Transfer", "Mexican SPEI Transfer", "Brazilian PIX"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Rail description and use cases",
+            "examples": ["Transfer funds within the United States using the ACH network", "Instant transfers within Mexico using SPEI"]
+          },
+          "supportedRegions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "ISO country codes where this rail is supported",
+            "examples": [["US"], ["MX"], ["BR"]]
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Requirement"
+            },
+            "description": "Required documents for this rail type"
+          }
+        },
+        "required": ["type", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "type": "ACH",
+            "name": "US ACH Transfer",
+            "description": "Transfer funds within the United States using the ACH network",
+            "supportedRegions": ["US"],
+            "requirements": [
+              {
+                "type": "document",
+                "slug": "governmentIssuedId",
+                "name": "Government Issued ID",
+                "description": "Upload a clear photo of your government-issued ID",
+                "acceptedFormats": ["PDF", "JPG", "PNG"]
+              }
+            ]
+          }
+        ]
+      },
+      "RailStatus": {
+        "type": "string",
+        "enum": ["pending", "active", "suspended", "rejected", "expired"],
+        "description": "Current status of the rail"
+      },
+      "RailInstance": {
+        "type": "object",
+        "description": "A specific rail instance attached to an account",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique rail instance ID",
+            "examples": ["rail_9f8e7d6c5b4a3210", "rail_1a2b3c4d5e6f7890"]
+          },
+          "type": {
+            "type": "string",
+            "enum": ["ACH", "WIRE", "SEPA", "SPEI", "PIX"],
+            "description": "Rail type",
+            "examples": ["ACH", "SPEI"]
+          },
+          "status": {
+            "$ref": "#/components/schemas/RailStatus"
+          },
+          "depositInstructions": {
+            "description": "Deposit instructions for this rail instance",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ACH"
+              },
+              {
+                "$ref": "#/components/schemas/Wire"
+              },
+              {
+                "$ref": "#/components/schemas/SEPA"
+              },
+              {
+                "$ref": "#/components/schemas/SPEI"
+              },
+              {
+                "$ref": "#/components/schemas/PIX"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the rail was requested",
+            "examples": ["2024-01-15T10:30:00Z", "2024-02-20T14:45:30Z"]
+          },
+          "activatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the rail became active",
+            "examples": ["2024-01-16T09:15:00Z", "2024-02-21T11:20:00Z"]
+          }
+        },
+        "required": ["id", "type", "status"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "id": "rail_9f8e7d6c5b4a3210",
+            "type": "ACH",
+            "status": "active",
+            "depositInstructions": {
+              "accountNumber": "1234567890",
+              "routingNumber": "021000021",
+              "name": "John Smith",
+              "email": "john.smith@example.com",
+              "phone": "+14155551234"
+            },
+            "createdAt": "2024-01-15T10:30:00Z",
+            "activatedAt": "2024-01-16T09:15:00Z"
+          }
+        ]
+      },
+      "Requirement": {
+        "type": "object",
+        "description": "Rail requirement for activation",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["document", "attestation", "data", "verification"],
+            "description": "Type of the requirement",
+            "examples": ["document", "attestation"]
+          },
+          "slug": {
+            "type": "string",
+            "description": "Friendly camelCase slug of the requirement",
+            "examples": ["governmentIssuedId", "proofOfAddress", "termsOfService"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Human-readable name of the requirement",
+            "examples": ["Government Issued ID", "Proof of Address", "Terms of Service"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the requirement",
+            "examples": ["Upload a clear photo of your government-issued ID (passport, driver's license, or national ID)", "Provide a recent utility bill or bank statement"]
+          },
+          "acceptedFormats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "(document type only) Accepted file formats (e.g., PDF, JPG)",
+            "examples": [["PDF", "JPG", "PNG"], ["PDF"]]
+          }
+        },
+        "required": ["type", "slug", "name"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "type": "document",
+            "slug": "governmentIssuedId",
+            "name": "Government Issued ID",
+            "description": "Upload a clear photo of your government-issued ID",
+            "acceptedFormats": ["PDF", "JPG", "PNG"]
+          },
+          {
+            "type": "attestation",
+            "slug": "termsOfService",
+            "name": "Terms of Service",
+            "description": "Agree to the terms of service and privacy policy"
+          }
+        ]
+      },
+      "RequirementsState": {
+        "type": "object",
+        "description": "Customer's submitted requirements state",
+        "properties": {
+          "missing": {
+            "type": "object",
+            "description": "Missing requirements",
+            "properties": {
+              "allOf": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              },
+              "anyOf": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              }
+            }
+          },
+          "submitted": {
+            "type": "object",
+            "description": "Submitted requirements",
+            "properties": {
+              "allOf": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              },
+              "anyOf": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              }
+            }
+          },
+          "verified": {
+            "type": "object",
+            "description": "Verified requirements",
+            "properties": {
+              "allOf": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              },
+              "anyOf": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Requirement"
+                }
+              }
+            }
+          },
+          "issues": {
+            "type": "array",
+            "description": "Issues with submitted requirements",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RequirementSubmission": {
+        "type": "object",
+        "description": "Submission of a requirement by customer",
+        "properties": {
+          "requirementSlug": {
+            "type": "string",
+            "description": "Slug of the requirement being submitted",
+            "examples": ["governmentIssuedId", "proofOfAddress", "termsOfService"]
+          },
+          "document": {
+            "type": "object",
+            "description": "For document type requirements",
+            "properties": {
+              "fileName": {
+                "type": "string",
+                "examples": ["passport.pdf", "drivers_license.jpg"]
+              },
+              "fileData": {
+                "type": "string",
+                "description": "Base64 encoded file data",
+                "examples": ["JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PC9UeXBlL1BhZ2UvUGFyZW50IDIg..."]
+              },
+              "mimeType": {
+                "type": "string",
+                "examples": ["application/pdf", "image/jpeg", "image/png"]
+              }
+            }
+          },
+          "attestation": {
+            "type": "object",
+            "description": "For attestation type requirements",
+            "properties": {
+              "agreed": {
+                "type": "boolean",
+                "examples": [true]
+              },
+              "version": {
+                "type": "string",
+                "description": "Version of terms/statement agreed to",
+                "examples": ["1.0", "2.1"]
+              }
+            }
+          },
+          "data": {
+            "type": "object",
+            "description": "For data type requirements",
+            "additionalProperties": true,
+            "examples": [
+              {
+                "taxId": "12-3456789",
+                "occupation": "Software Engineer"
+              }
+            ]
+          }
+        },
+        "required": ["requirementSlug"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "requirementSlug": "governmentIssuedId",
+            "document": {
+              "fileName": "passport.pdf",
+              "fileData": "JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PC9UeXBlL1BhZ2UvUGFyZW50IDIg...",
+              "mimeType": "application/pdf"
+            }
+          },
+          {
+            "requirementSlug": "termsOfService",
+            "attestation": {
+              "agreed": true,
+              "version": "1.0"
+            }
+          }
+        ]
+      },
+      "RailRequest": {
+        "type": "object",
+        "description": "Request to add a new rail to an account",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["ACH", "WIRE", "SEPA", "SPEI", "PIX"],
+            "description": "Type of rail to request",
+            "examples": ["ACH", "SPEI", "PIX"]
+          }
+        },
+        "required": ["type"],
+        "additionalProperties": false,
+        "examples": [
+          {
+            "type": "ACH"
+          },
+          {
+            "type": "SPEI"
+          }
+        ]
+      },
+      "RailTypesResponse": {
+        "type": "object",
+        "description": "Response containing available rail types",
+        "properties": {
+          "railTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RailType"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "AccountRailsResponse": {
+        "type": "array",
+        "description": "Response containing account's rails",
+        "items": {
+          "type": "object",
+          "properties": {
+            "rail": {
+              "$ref": "#/components/schemas/RailInstance"
+            },
+            "requirements": {
+              "$ref": "#/components/schemas/RequirementsState"
+            }
+          }
+        }
+      },
+      "RailResponse": {
+        "type": "object",
+        "description": "Response containing rail details",
+        "properties": {
+          "rail": {
+            "$ref": "#/components/schemas/RailInstance"
+          },
+          "requirements": {
+            "$ref": "#/components/schemas/RequirementsState"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "responses": {
+      "ConflictDuplicate": {
+        "description": "Duplicate request detected for this Idempotency-Key.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResponseError"
+            }
           }
         }
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
+      "BearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "TOKEN",
+        "description": "Authentication: Bearer YOUR_API_KEY"
       }
     }
   }
