@@ -49,9 +49,7 @@
       },
       {
         "tab": "API reference",
-        "openapi": {
-            "source": "openapi.json"
-        }
+        "openapi":  "openapi.json"
       }
     ],
     "global": {
