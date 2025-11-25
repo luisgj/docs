@@ -11,9 +11,9 @@
   "fonts": {
     "family": "Kanit",
     "weight": 500,
-    "heading": {
-      "family": "Kanit",
-      "weight": 500
+    "body": {
+      "family": "Inter",
+      "weight": 400
     }
   },
   "navigation": {
