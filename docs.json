@@ -4,10 +4,18 @@
   "name": "Bando Developer Docs",
   "colors": {
     "primary": "#54c4a5",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "light": "#54c4a5",
+    "dark": "#54c4a5"
   },
   "favicon": "/favicon.png",
+  "fonts": {
+    "family": "Poppins",
+    "weight": 500,
+    "heading": {
+      "family": "Kanit",
+      "weight": 500
+    }
+  },
   "navigation": {
     "tabs": [
       {
@@ -17,8 +25,7 @@
             "group": "Getting started",
             "pages": [
               "index",
-              "quickstart",
-              "development"
+              "quickstart"
             ]
           },
           {
@@ -49,7 +56,7 @@
       },
       {
         "tab": "API reference",
-        "openapi":  "/api-reference/openapi.json"
+        "openapi": "/api-reference/openapi.json"
       }
     ]
   },
@@ -72,15 +79,15 @@
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
