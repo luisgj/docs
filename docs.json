@@ -21,7 +21,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Home",
         "groups": [
           {
             "group": "Getting started",
@@ -58,7 +58,7 @@
       },
       {
         "tab": "API reference",
-        "openapi": "/api-reference/openapi.json"
+        "openapi": "https://apidev.bando.cool/v1/openapi.json"
       }
     ]
   },
