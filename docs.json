@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "almond",
   "name": "Bando Developer Docs",
   "colors": {
     "primary": "#54c4a5",
